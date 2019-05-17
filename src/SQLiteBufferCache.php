@@ -32,7 +32,7 @@ class SQLiteBufferCache extends Helper {
      */
     var $ttl = 18000;
     /**
-     * Only cache for spesific extension
+     * @var array $ext  Only cache for spesific extension
      */
     var $ext = [
         '.htm','.html','.xhtml','.asp','.aspx','.css',

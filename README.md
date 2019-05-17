@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/packagist/l/aalfiann/buffer-cache.svg)](https://github.com/aalfiann/buffer-cache/blob/HEAD/LICENSE.md)
 
 Cache the response page with buffer support.  
-Sometimes we just want to simply cache the response page.
+Sometimes we just want to simply cache the output response page.
 
 ## Dependencies
 - Symfony Cache >> symfony/cache
@@ -41,7 +41,8 @@ $cache = new SQLiteBufferCache([
 $cache->start();
 
 // Start buffer
-$cache->startBuffer('modify');  //just set to null if you don't have buffer callback
+//$cache->startBuffer();        // without callback
+$cache->startBuffer('modify');  // with callback
 
 // Example to render page
 echo '<html>
@@ -55,9 +56,28 @@ echo '<html>
 //$cache->cancelBuffer();
 
 // End cache
-$cache->end('modify');
+//$cache->end();        // without callback
+$cache->end('modify');  // with callback
+```
+
+## Url page with extension
+This will not cache for url page with binary extension like .exe, .rar, .zip, .mp4, .mp3, etc.  
+You have to whitelist the extension if you want to cache.  
+
+```php
+// Example if you want to allow cache for phyton dan text extension
+$cache->addExtension('.py');
+$cache->addExtension('.txt');
+```
+
+The default extensions which is already allowed are:
+```php
+var $ext = [
+    '.htm','.html','.xhtml','.asp','.aspx','.css',
+    '.php','.js','.jsp','.cfm','.md','.xml','.rss'
+];
 ```
 
 ## Note
 - Url page with parameter will not going to cache.
-- I only create buffer cache for **SQLite3**, so contribution are welcome.
+- I only create buffer cache with use **SQLite3**, so contribution are welcome.
