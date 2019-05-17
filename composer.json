@@ -1,0 +1,26 @@
+{
+    "name": "aalfiann/buffer-cache",
+    "description": "Cache the response page with buffer support.",
+    "keywords": ["cache","buffer"],
+    "authors": [
+        {
+            "name": "M ABD AZIZ ALFIAN",
+            "email": "aalfiann@gmail.com",
+            "homepage": "https://github.com/aalfiann",
+            "role": "Developer"
+        }
+    ],
+    "type": "library",
+    "require": {
+        "php": ">=7.1",
+        "ext-sqlite3": "*",
+        "symfony/cache": "^4.2",
+        "doctrine/cache": "^1.8"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "aalfiann\\BufferCache\\": "src/"
+        }
+    }
+}
