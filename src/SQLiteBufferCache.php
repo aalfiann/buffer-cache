@@ -69,9 +69,12 @@ class SQLiteBufferCache extends Helper {
 
     /**
      * Start to writing page cache, put this on top of your script to cache
+     * 
+     * @var callback $cb    this is the for doing anonymous function when cache is found
      */
-    public function start(){;
+    public function start(callable $cb=null){;
         if ($this->_cache->hasItem($this->_keycache)) {
+            $cb;
             $data = $this->_cache->getItem($this->_keycache);
             echo base64_decode($data->get());
             exit;
@@ -83,14 +86,12 @@ class SQLiteBufferCache extends Helper {
      * 
      * @param callback $buffer
      */
-    public function startBuffer($buffer=null){;
+    public function startBuffer(callable $buffer=null){;
         ob_start($buffer);
     }
 
     /**
      * Cancel Buffer
-     * 
-     * @param callback $buffer
      */
     public function cancelBuffer(){;
         ob_end_flush();
@@ -102,7 +103,7 @@ class SQLiteBufferCache extends Helper {
      * 
      * @param callback $buffer
      */
-    public function end($buffer=null){
+    public function end(callable $buffer=null){
         if(!$this->_cancelBuffer){
             if(!$this->isHaveParam()){
                 if(!$this->isExtension() || ($this->isExtension() && $this->isExtensionAllowed($this->ext))){

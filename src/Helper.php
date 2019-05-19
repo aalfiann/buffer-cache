@@ -23,6 +23,15 @@ class Helper {
     }
 
     /**
+     * Get File Extension
+     * 
+     * @return string
+     */
+    public function getFileExtension() {
+        return strrchr($this->_keycache,'.');
+    }
+
+    /**
      * Check the page type is extension or not
      * 
      * @return bool
