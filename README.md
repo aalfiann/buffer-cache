@@ -20,7 +20,12 @@ composer install aalfiann/buffer-cache
 
 ## Usage
 ```php
+// With Filesystem
+// use aalfiann\BufferCache\FilesystemBufferCache;
+
+// With SQLite3
 use aalfiann\BufferCache\SQLiteBufferCache;
+
 require 'vendor/autoload.php';
 
 // Callback to modify html source before cache
@@ -32,6 +37,13 @@ function modify($buffer) {
     return $buffer;
 }
 
+// With Filesystem
+// $cache = new FilesystemBufferCache([
+//     // Set ttl cache
+//     'ttl' => 120
+// ]);
+
+// With SQLite3
 $cache = new SQLiteBufferCache([
     // Set ttl cache
     'ttl' => 120
@@ -80,4 +92,4 @@ var $ext = [
 
 ## Note
 - Url page with parameter will not going to cache.
-- I only create buffer cache with use **SQLite3**, so contribution are welcome.
+- I only create buffer cache with using **SQLite3** and **Filesystem**, so contribution are welcome.
