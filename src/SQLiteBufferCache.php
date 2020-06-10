@@ -66,7 +66,7 @@ class SQLiteBufferCache extends Helper {
      * 
      * @var callback $cb    this is the for doing anonymous function when cache is found
      */
-    public function start(callable $cb=null){;
+    public function start(callable $cb=null){
         if ($this->_cache->hasItem($this->_keycache)) {
             if($this->isHttpCache()) $this->checkEtag();
             $cb;
@@ -81,14 +81,14 @@ class SQLiteBufferCache extends Helper {
      * 
      * @param callback $buffer
      */
-    public function startBuffer(callable $buffer=null){;
+    public function startBuffer(callable $buffer=null){
         ob_start($buffer);
     }
 
     /**
      * Cancel Buffer
      */
-    public function cancelBuffer(){;
+    public function cancelBuffer(){
         ob_end_flush();
         $this->_cancelBuffer = true;
     }
