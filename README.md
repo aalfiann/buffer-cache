@@ -72,15 +72,38 @@ echo '<html>
 $cache->end('modify');  // with callback
 ```
 
+## Available Constructor
+1. Cache with SQLite3
+    ```php
+    $cache = new SQLiteBufferCache([
+        // options here
+    ]);
+    ```
+
+2. Cache with Filesystem
+    ```php
+    $cache = new FilesystemBufferCache([
+        // options here
+    ]);
+    ```
+
+## Options in constructor class
+Here is the default options in constructor class
+```php
+[
+    'ttl' => 18000,         // time to live cache
+    'http_cache' => false,  // use http cache
+    'http_maxage' => 3600,  // maxage of http cache
+    'ext' => [              // Allow cache for url with extension 
+        '.htm','.html','.xhtml','.asp','.aspx','.css',
+        '.php','.js','.jsp','.cfm','.md','.xml','.rss'
+    ]
+]
+```
+
 ## Url page with extension
 This will not cache for url page with binary extension like .exe, .rar, .zip, .mp4, .mp3, etc.  
 You have to whitelist the extension if you want to cache.  
-
-```php
-// Example if you want to allow cache for phyton dan text extension
-$cache->addExtension('.py');
-$cache->addExtension('.txt');
-```
 
 The default extensions which is already allowed are:
 ```php
@@ -90,6 +113,50 @@ var $ext = [
 ];
 ```
 
+Example if you want to add more `.py` and `.txt`.
+```php
+$cache->addExtension('.py');
+$cache->addExtension('.txt');
+```
+
+Example if you want just allow `.js` and `.css` only.
+
+1. By options in constructor class
+    ```php
+    $cache = new SQLiteBufferCache([
+        'ext' => ['.js', '.css']
+    ]);
+    ```
+
+2. Or by properties
+    ```php
+    $cache->ext = ['.js', '.css'];
+    ```
+
+## Http Cache
+This library is support http cache but inactivated by default.  
+If you want to use this, there is three ways :
+
+1. By options in constructor class
+    ```php
+    $cache = new SQLiteBufferCache([
+        'http_cache' => true,
+        'http_maxage' => 3600
+    ]);
+    ```
+
+2. Or by function
+    ```php
+    $cache->useHttpCache(3600);
+    ```
+
+3. Or by properties
+    ```php
+    $cache->http_cache = true;
+    $cache->http_maxage = 3600;
+    ```
+
+
 ## Note
-- Url page with parameter will not going to cache.
+- Like the browser, url pages with parameters will not be cached.
 - I only create buffer cache with using **SQLite3** and **Filesystem**, so contribution are welcome.

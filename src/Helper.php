@@ -12,6 +12,64 @@ namespace aalfiann\BufferCache;
 class Helper {
 
     /**
+     * @var int $ttl    time to live of the cache
+     */
+    var $ttl = 18000;
+    /**
+     * @var array $ext  Only cache for spesific extension
+     */
+    var $ext = [
+        '.htm','.html','.xhtml','.asp','.aspx','.css',
+        '.php','.js','.jsp','.cfm','.md','.xml','.rss'
+    ];
+    /**
+     * @var bool $http_cache    To activate HTTP Cache
+     */
+    var $http_cache = false;
+    /**
+     * @var integer $http_maxage    Set maxage of HTTP Cache
+     */
+    var $http_maxage = 3600;
+
+    /**
+     * Using HTTP Cache
+     * @return this
+     */
+    public function useHttpCache($maxage) {
+        $this->http_cache = true;
+        $this->http_maxage = $maxage;
+        return $this;
+    }
+
+    /**
+     * Is using HTTP Cache
+     * @return bool
+     */
+    public function isHttpCache() {
+        return $this->http_cache;
+    }
+
+    /**
+     * Check HTTP Cache by Etag
+     */
+    public function checkEtag() {
+        if(isset($_SERVER['HTTP_IF_NONE_MATCH']) && trim($_SERVER['HTTP_IF_NONE_MATCH']) == $this->_etag) { 
+            header("HTTP/1.1 304 Not Modified"); 
+            exit;
+        }
+    }
+
+    /**
+     * Add response with HTTP Cache
+     */
+    public function withHttpCache() {
+        $expires = (time() + $this->http_maxage);
+        header("Cache-Control: public, must-revalidate, max-age=".$this->http_maxage);
+        header("Expires: ".gmdate('D, d M Y H:i:s',$expires)." GMT");
+        header('Etag: '.$this->_etag);
+    }
+
+    /**
      * Add Extension Type
      * 
      * @param string $ext   this is an extension with .(dot). Example .py for phyton extension.

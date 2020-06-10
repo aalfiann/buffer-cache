@@ -16,25 +16,6 @@ use Symfony\Component\Cache\Adapter\DoctrineAdapter;
 class FilesystemBufferCache extends Helper {
 
     /**
-     * @var string $namespace   this is the namespace for cache
-     */
-    var $namespace = 'page';
-    /**
-     * @var string $path    this is the file location
-     */
-    var $path = 'cache/page/';
-    /**
-     * @var int $ttl    time to live of the cache
-     */
-    var $ttl = 18000;
-    /**
-     * @var array $ext  Only cache for spesific extension
-     */
-    var $ext = [
-        '.htm','.html','.xhtml','.asp','.aspx','.css',
-        '.php','.js','.jsp','.cfm','.md','.xml','.rss'
-    ];
-    /**
      * @var object class (construct)
      */
     var $_provider;
@@ -43,13 +24,26 @@ class FilesystemBufferCache extends Helper {
      */
     var $_cache;
     /**
-     * @var string keycache (construct)
+     * @var string class (construct)
      */
     var $_keycache;
     /**
-     * @var bool 
+     * @var string class (construct)
+     */
+    var $_etag;
+    /**
+     * @var bool $_cancelBuffer this is to cancel buffer cache
      */
     var $_cancelBuffer = false;
+    /**
+     * @var string $namespace   this is the namespace for cache
+     */
+    var $namespace = 'page';
+    /**
+     * @var string $path    this is the file location
+     */
+    var $path = 'cache/page/';
+    
 
     function __construct($options=array()) {
         if(!empty($options)){
@@ -61,6 +55,7 @@ class FilesystemBufferCache extends Helper {
         $this->_provider = new FilesystemCache($this->path);
         $this->_cache = new DoctrineAdapter($this->_provider,$this->namespace,0);
         $this->_keycache = str_replace(['{','}','(',')','/','\'','@','?','*',':','<','>','|',' '],'.',strtolower($this->namespace.'.'.$_SERVER['REQUEST_URI']));
+        $this->_etag = '"'.md5($this->_keycache).'"';
     }
 
     /**
@@ -70,6 +65,7 @@ class FilesystemBufferCache extends Helper {
      */
     public function start(callable $cb=null){;
         if ($this->_cache->hasItem($this->_keycache)) {
+            if($this->isHttpCache()) $this->checkEtag();
             $cb;
             $data = $this->_cache->getItem($this->_keycache);
             echo base64_decode($data->get());
@@ -107,6 +103,7 @@ class FilesystemBufferCache extends Helper {
                     $newdata = $this->_cache->getItem($this->_keycache);
                     $newdata->set($data)->expiresAfter($this->ttl);
                     $this->_cache->save($newdata);
+                    if($this->isHttpCache()) $this->withHttpCache();
                 }
             }
             ob_end_flush();

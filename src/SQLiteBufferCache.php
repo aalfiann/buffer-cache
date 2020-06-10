@@ -16,6 +16,26 @@ use Symfony\Component\Cache\Adapter\DoctrineAdapter;
 class SQLiteBufferCache extends Helper {
 
     /**
+     * @var object class (construct)
+     */
+    var $_provider;
+    /**
+     * @var object class (construct)
+     */
+    var $_cache;
+    /**
+     * @var string class (construct)
+     */
+    var $_keycache;
+    /**
+     * @var string class (construct)
+     */
+    var $_etag;
+    /**
+     * @var bool $_cancelBuffer this is to cancel buffer cache
+     */
+    var $_cancelBuffer = false;
+    /**
      * @var string $namespace   this is the namespace for cache
      */
     var $namespace = 'page';
@@ -27,33 +47,6 @@ class SQLiteBufferCache extends Helper {
      * @var string $path    this is sqlite file location
      */
     var $path = 'cache/page/page_cache.sqlite3';
-    /**
-     * @var int $ttl    time to live of the cache
-     */
-    var $ttl = 18000;
-    /**
-     * @var array $ext  Only cache for spesific extension
-     */
-    var $ext = [
-        '.htm','.html','.xhtml','.asp','.aspx','.css',
-        '.php','.js','.jsp','.cfm','.md','.xml','.rss'
-    ];
-    /**
-     * @var object class (construct)
-     */
-    var $_provider;
-    /**
-     * @var object class (construct)
-     */
-    var $_cache;
-    /**
-     * @var string keycache (construct)
-     */
-    var $_keycache;
-    /**
-     * @var bool 
-     */
-    var $_cancelBuffer = false;
 
     function __construct($options=array()) {
         if(!empty($options)){
@@ -65,6 +58,7 @@ class SQLiteBufferCache extends Helper {
         $this->_provider = new SQLite3Cache(new \SQLite3($this->path), $this->table);
         $this->_cache = new DoctrineAdapter($this->_provider,$this->namespace,0);
         $this->_keycache = str_replace(['{','}','(',')','/','\'','@','?','*',':','<','>','|',' '],'.',strtolower($this->namespace.'.'.$_SERVER['REQUEST_URI']));
+        $this->_etag = '"'.md5($this->_keycache).'"';
     }
 
     /**
@@ -74,6 +68,7 @@ class SQLiteBufferCache extends Helper {
      */
     public function start(callable $cb=null){;
         if ($this->_cache->hasItem($this->_keycache)) {
+            if($this->isHttpCache()) $this->checkEtag();
             $cb;
             $data = $this->_cache->getItem($this->_keycache);
             echo base64_decode($data->get());
@@ -111,6 +106,7 @@ class SQLiteBufferCache extends Helper {
                     $newdata = $this->_cache->getItem($this->_keycache);
                     $newdata->set($data)->expiresAfter($this->ttl);
                     $this->_cache->save($newdata);
+                    if($this->isHttpCache()) $this->withHttpCache();
                 }
             }
             ob_end_flush();
