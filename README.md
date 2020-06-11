@@ -91,10 +91,11 @@ $cache->end('modify');  // with callback
 Here is the default options in constructor class
 ```php
 [
-    'ttl' => 18000,         // time to live cache
-    'http_cache' => false,  // use http cache
-    'http_maxage' => 3600,  // maxage of http cache
-    'ext' => [              // Allow cache for url with extension 
+    'ttl' => 18000,                     // time to live cache
+    'http_cache' => false,              // use http cache
+    'http_maxage' => 3600,              // maxage of http cache
+    'cache_empty_content' => false,     // cache empty content
+    'ext' => [                          // Allow cache for url with extension 
         '.htm','.html','.xhtml','.asp','.aspx','.css',
         '.php','.js','.jsp','.cfm','.md','.xml','.rss'
     ]

@@ -99,11 +99,21 @@ class FilesystemBufferCache extends Helper {
         if(!$this->_cancelBuffer){
             if(!$this->isHaveParam()){
                 if(!$this->isExtension() || ($this->isExtension() && $this->isExtensionAllowed($this->ext))){
-                    $data = base64_encode((!empty($buffer) ? $buffer(ob_get_contents()) : ob_get_contents()));
-                    $newdata = $this->_cache->getItem($this->_keycache);
-                    $newdata->set($data)->expiresAfter($this->ttl);
-                    $this->_cache->save($newdata);
-                    if($this->isHttpCache()) $this->withHttpCache();
+                    if(!empty(ob_get_contents())) {
+                        $data = base64_encode((!empty($buffer) ? $buffer(ob_get_contents()) : ob_get_contents()));
+                        $newdata = $this->_cache->getItem($this->_keycache);
+                        $newdata->set($data)->expiresAfter($this->ttl);
+                        $this->_cache->save($newdata);
+                        if($this->isHttpCache()) $this->withHttpCache();
+                    } else {
+                        if($this->cache_empty_content) {
+                            $data = base64_encode((!empty($buffer) ? $buffer(ob_get_contents()) : ob_get_contents()));
+                            $newdata = $this->_cache->getItem($this->_keycache);
+                            $newdata->set($data)->expiresAfter($this->ttl);
+                            $this->_cache->save($newdata);
+                            if($this->isHttpCache()) $this->withHttpCache();
+                        }
+                    }
                 }
             }
             ob_end_flush();

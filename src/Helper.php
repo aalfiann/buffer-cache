@@ -30,6 +30,10 @@ class Helper {
      * @var integer $http_maxage    Set maxage of HTTP Cache
      */
     var $http_maxage = 3600;
+    /**
+     * @var bool $cache_empty_content   Cache empty content 
+     */
+    var $cache_empty_content = false;
 
     /**
      * Using HTTP Cache
