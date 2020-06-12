@@ -2,18 +2,19 @@
 namespace aalfiann\BufferCache;
 
 use Doctrine\Common\Cache\CacheProvider;
-use Doctrine\Common\Cache\SQLite3Cache;
+use Doctrine\Common\Cache\PredisCache;
 use Symfony\Component\Cache\Adapter\DoctrineAdapter;
+use Predis\Client;
 
 /**
- * SQLiteBufferCache class
+ * PredisBufferCache class
  *
  * @package    aalfiann/buffer-cache
  * @author     M ABD AZIZ ALFIAN <github.com/aalfiann>
  * @copyright  Copyright (c) 2019 M ABD AZIZ ALFIAN
  * @license    https://github.com/aalfiann/buffer-cache/blob/master/LICENSE.md  MIT License
  */
-class SQLiteBufferCache extends Helper {
+class PredisBufferCache extends Helper {
 
     /**
      * @var object class (construct)
@@ -42,8 +43,8 @@ class SQLiteBufferCache extends Helper {
                 $this->{$key} = $value;
             }
         }
-        if(!file_exists(dirname($this->sqlite3['path']))) mkdir(dirname($this->sqlite3['path']), 0777, true);
-        $this->_provider = new SQLite3Cache(new \SQLite3($this->sqlite3['path']), $this->sqlite3['table']);
+        $client = new Client($this->predis);
+        $this->_provider = new PredisCache($client);
         $this->_cache = new DoctrineAdapter($this->_provider,$this->namespace,0);
         $this->_keycache = str_replace(['{','}','(',')','/','\'','@','?','*',':','<','>','|',' '],'.',strtolower($this->namespace.'.'.$_SERVER['REQUEST_URI']));
         $this->_etag = '"'.md5($this->_keycache).'"';

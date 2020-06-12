@@ -12,28 +12,53 @@ namespace aalfiann\BufferCache;
 class Helper {
 
     /**
-     * @var int $ttl    time to live of the cache
+     * @var string $namespace   this is the namespace for cache
+     */
+    var $namespace = 'page';
+    /**
+     * @var int $ttl                    Time to live of the cache
      */
     var $ttl = 18000;
     /**
-     * @var array $ext  Only cache for spesific extension
+     * @var array $ext                  Only cache for spesific extension
      */
     var $ext = [
         '.htm','.html','.xhtml','.asp','.aspx','.css',
         '.php','.js','.jsp','.cfm','.md','.xml','.rss'
     ];
     /**
-     * @var bool $http_cache    To activate HTTP Cache
+     * @var bool $http_cache            To activate HTTP Cache
      */
     var $http_cache = false;
     /**
-     * @var integer $http_maxage    Set maxage of HTTP Cache
+     * @var integer $http_maxage        Set maxage of HTTP Cache
      */
     var $http_maxage = 3600;
     /**
      * @var bool $cache_empty_content   Cache empty content 
      */
     var $cache_empty_content = false;
+    /**
+     * @var array $filesystem           Filesystem parameters or options
+     */
+    var $filesystem = [
+        'path' => 'cache/page'
+    ];
+    /**
+     * @var array $sqlite3              SQLite3 parameters or options
+     */
+    var $sqlite3 = [
+        'table' => 'cache',
+        'path' => 'cache/page/page_cache.sqlite3'
+    ];
+    /**
+     * @var array $predis               Predis parameters or options. See https://packagist.org/packages/predis/predis.
+     */
+    var $predis = [
+        'scheme' => 'tcp',
+        'host'   => '127.0.0.1',
+        'port'   => 6379
+    ];
 
     /**
      * Using HTTP Cache

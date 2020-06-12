@@ -13,9 +13,12 @@
     "type": "library",
     "require": {
         "php": ">=7.1",
-        "ext-sqlite3": "*",
         "symfony/cache": "^4.2",
         "doctrine/cache": "^1.8"
+    },
+    "suggest": {
+        "ext-sqlite3": "Allows you to use cache with SQLite3",
+        "predis/predis": "Allows you to use cache with Redis"
     },
     "license": "MIT",
     "autoload": {

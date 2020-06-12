@@ -35,14 +35,6 @@ class FilesystemBufferCache extends Helper {
      * @var bool $_cancelBuffer this is to cancel buffer cache
      */
     var $_cancelBuffer = false;
-    /**
-     * @var string $namespace   this is the namespace for cache
-     */
-    var $namespace = 'page';
-    /**
-     * @var string $path    this is the file location
-     */
-    var $path = 'cache/page/';
     
 
     function __construct($options=array()) {
@@ -51,8 +43,8 @@ class FilesystemBufferCache extends Helper {
                 $this->{$key} = $value;
             }
         }
-        if(!file_exists(dirname($this->path))) mkdir(dirname($this->path), 0777, true);
-        $this->_provider = new FilesystemCache($this->path);
+        if(!file_exists(dirname($this->filesystem['path']))) mkdir(dirname($this->filesystem['path']), 0777, true);
+        $this->_provider = new FilesystemCache($this->filesystem['path']);
         $this->_cache = new DoctrineAdapter($this->_provider,$this->namespace,0);
         $this->_keycache = str_replace(['{','}','(',')','/','\'','@','?','*',':','<','>','|',' '],'.',strtolower($this->namespace.'.'.$_SERVER['REQUEST_URI']));
         $this->_etag = '"'.md5($this->_keycache).'"';

@@ -15,16 +15,20 @@ Sometimes we just want to simply cache the output response page.
 
 Install this package via [Composer](https://getcomposer.org/).
 ```
-composer install aalfiann/buffer-cache
+composer require aalfiann/buffer-cache
 ```
+
+- With SQLite  
+Make sure your server already installed `php7-sqlite3`.
+
+- With Redis  
+    ```
+    composer require predis/predis
+    ```
 
 ## Usage
 ```php
-// With Filesystem
-// use aalfiann\BufferCache\FilesystemBufferCache;
-
-// With SQLite3
-use aalfiann\BufferCache\SQLiteBufferCache;
+use aalfiann\BufferCache\FilesystemBufferCache;
 
 require 'vendor/autoload.php';
 
@@ -37,14 +41,7 @@ function modify($buffer) {
     return $buffer;
 }
 
-// With Filesystem
-// $cache = new FilesystemBufferCache([
-//     // Set ttl cache
-//     'ttl' => 120
-// ]);
-
-// With SQLite3
-$cache = new SQLiteBufferCache([
+$cache = new FilesystemBufferCache([
     // Set ttl cache
     'ttl' => 120
 ]);
@@ -73,16 +70,26 @@ $cache->end('modify');  // with callback
 ```
 
 ## Available Constructor
-1. Cache with SQLite3
+1. Cache with Filesystem
     ```php
+    use aalfiann\BufferCache\FilesystemBufferCache;
+    $cache = new FilesystemBufferCache([
+        // options here
+    ]);
+    ```
+
+2. Cache with SQLite3
+    ```php
+    use aalfiann\BufferCache\SQLiteBufferCache;
     $cache = new SQLiteBufferCache([
         // options here
     ]);
     ```
 
-2. Cache with Filesystem
+3. Cache with Redis
     ```php
-    $cache = new FilesystemBufferCache([
+    use aalfiann\BufferCache\PredisBufferCache;
+    $cache = new PredisBufferCache([
         // options here
     ]);
     ```
@@ -91,6 +98,7 @@ $cache->end('modify');  // with callback
 Here is the default options in constructor class
 ```php
 [
+    'namespace' => 'page',              // namespace for cache
     'ttl' => 18000,                     // time to live cache
     'http_cache' => false,              // use http cache
     'http_maxage' => 3600,              // maxage of http cache
@@ -98,9 +106,23 @@ Here is the default options in constructor class
     'ext' => [                          // Allow cache for url with extension 
         '.htm','.html','.xhtml','.asp','.aspx','.css',
         '.php','.js','.jsp','.cfm','.md','.xml','.rss'
+    ],
+    'filesystem' => [                   // filesystem parameters or options
+        'path' => 'cache/page'
+    ],
+    'sqlite3' => [                      // sqlite3 parameters or options
+        'table' => 'cache',
+        'path' => 'cache/page/page_cache.sqlite3'
+    ],
+    'predis' => [                       // predis parameters or options.
+        'scheme' => 'tcp',
+        'host'   => '127.0.0.1',
+        'port'   => 6379
     ]
 ]
 ```
+
+For more detail information about predis options. See [https://packagist.org/packages/predis/predis](https://packagist.org/packages/predis/predis).
 
 ## Url page with extension
 This will not cache for url page with binary extension like .exe, .rar, .zip, .mp4, .mp3, etc.  
@@ -160,4 +182,4 @@ If you want to use this, there is three ways :
 
 ## Note
 - Like the browser, url pages with parameters will not be cached.
-- I only create buffer cache with using **SQLite3** and **Filesystem**, so contribution are welcome.
+- I only create buffer cache with using **Filesystem**, **SQLite3** and **Redis**, so contribution are welcome.
