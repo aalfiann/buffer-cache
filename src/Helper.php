@@ -39,6 +39,10 @@ class Helper {
      */
     var $cache_empty_content = false;
     /**
+     * @var bool $cache_query_param     Cache url with query parameter 
+     */
+    var $cache_query_param = false;
+    /**
      * @var array $filesystem           Filesystem parameters or options
      */
     var $filesystem = [

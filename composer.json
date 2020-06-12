@@ -1,7 +1,7 @@
 {
     "name": "aalfiann/buffer-cache",
     "description": "Cache the response page with buffer support.",
-    "keywords": ["cache","buffer"],
+    "keywords": ["cache","buffer-cache","page-cache","response-cache","simple-cache"],
     "authors": [
         {
             "name": "M ABD AZIZ ALFIAN",
@@ -17,7 +17,7 @@
         "doctrine/cache": "^1.8"
     },
     "suggest": {
-        "ext-sqlite3": "Allows you to use cache with SQLite3",
+        "ext-sqlite3": "SQLite3 extension is required to use the SQLite3 database as a cache storage",
         "predis/predis": "Allows you to use cache with Redis"
     },
     "license": "MIT",

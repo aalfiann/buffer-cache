@@ -46,7 +46,7 @@ class FilesystemBufferCache extends Helper {
         if(!file_exists(dirname($this->filesystem['path']))) mkdir(dirname($this->filesystem['path']), 0777, true);
         $this->_provider = new FilesystemCache($this->filesystem['path']);
         $this->_cache = new DoctrineAdapter($this->_provider,$this->namespace,0);
-        $this->_keycache = str_replace(['{','}','(',')','/','\'','@','?','*',':','<','>','|',' '],'.',strtolower($this->namespace.'.'.$_SERVER['REQUEST_URI']));
+        $this->_keycache = str_replace(['{','}','(',')','/','\'','@','?','*',':','<','>','|',' ','&','='],'.',strtolower($this->namespace.'.'.$_SERVER['REQUEST_URI']));
         $this->_etag = '"'.md5($this->_keycache).'"';
     }
 
@@ -91,24 +91,37 @@ class FilesystemBufferCache extends Helper {
         if(!$this->_cancelBuffer){
             if(!$this->isHaveParam()){
                 if(!$this->isExtension() || ($this->isExtension() && $this->isExtensionAllowed($this->ext))){
-                    if(!empty(ob_get_contents())) {
-                        $data = base64_encode((!empty($buffer) ? $buffer(ob_get_contents()) : ob_get_contents()));
-                        $newdata = $this->_cache->getItem($this->_keycache);
-                        $newdata->set($data)->expiresAfter($this->ttl);
-                        $this->_cache->save($newdata);
-                        if($this->isHttpCache()) $this->withHttpCache();
-                    } else {
-                        if($this->cache_empty_content) {
-                            $data = base64_encode((!empty($buffer) ? $buffer(ob_get_contents()) : ob_get_contents()));
-                            $newdata = $this->_cache->getItem($this->_keycache);
-                            $newdata->set($data)->expiresAfter($this->ttl);
-                            $this->_cache->save($newdata);
-                            if($this->isHttpCache()) $this->withHttpCache();
-                        }
-                    }
+                    $this->saveContent($buffer);
+                }
+            } else {
+                if($this->cache_query_param) {
+                    $this->saveContent($buffer);
                 }
             }
             ob_end_flush();
+        }
+    }
+
+    /**
+     * Save content to cache storage
+     * 
+     * @param callback $buffer
+     */
+    private function saveContent(callable $buffer=null) {
+        if(!empty(ob_get_contents())) {
+            $data = base64_encode((!empty($buffer) ? $buffer(ob_get_contents()) : ob_get_contents()));
+            $newdata = $this->_cache->getItem($this->_keycache);
+            $newdata->set($data)->expiresAfter($this->ttl);
+            $this->_cache->save($newdata);
+            if($this->isHttpCache()) $this->withHttpCache();
+        } else {
+            if($this->cache_empty_content) {
+                $data = base64_encode((!empty($buffer) ? $buffer(ob_get_contents()) : ob_get_contents()));
+                $newdata = $this->_cache->getItem($this->_keycache);
+                $newdata->set($data)->expiresAfter($this->ttl);
+                $this->_cache->save($newdata);
+                if($this->isHttpCache()) $this->withHttpCache();
+            }
         }
     }
 

@@ -98,11 +98,12 @@ $cache->end('modify');  // with callback
 Here is the default options in constructor class
 ```php
 [
-    'namespace' => 'page',              // namespace for cache
-    'ttl' => 18000,                     // time to live cache
-    'http_cache' => false,              // use http cache
-    'http_maxage' => 3600,              // maxage of http cache
-    'cache_empty_content' => false,     // cache empty content
+    'namespace' => 'page',              // Namespace for cache
+    'ttl' => 18000,                     // Time to live cache
+    'http_cache' => false,              // Use http cache
+    'http_maxage' => 3600,              // Maxage of http cache
+    'cache_empty_content' => false,     // Cache empty content
+    'cache_query_param' => false,       // Allow cache for url with query parameter
     'ext' => [                          // Allow cache for url with extension 
         '.htm','.html','.xhtml','.asp','.aspx','.css',
         '.php','.js','.jsp','.cfm','.md','.xml','.rss'
@@ -181,5 +182,4 @@ If you want to use this, there is three ways :
 
 
 ## Note
-- Like the browser, url pages with parameters will not be cached.
 - I only create buffer cache with using **Filesystem**, **SQLite3** and **Redis**, so contribution are welcome.
